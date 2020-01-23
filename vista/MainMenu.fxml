@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="pane_stage" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.MainMenuController">
+   <children>
+      <VBox layoutX="348.0" layoutY="92.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu fx:id="design_btn" disable="true" mnemonicParsing="false" text="Diseñar" />
+                <Menu fx:id="import_btn" mnemonicParsing="false" text="Importar">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#import_diagram" text="Diagrama causal" />
+                     </items></Menu>
+              </menus>
+            </MenuBar>
+            <ToolBar prefHeight="20.0" prefWidth="640.0">
+              <items>
+                  <JFXButton fx:id="edit_btn" disable="true" onAction="#edit_diagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/edit.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
+                  <JFXButton fx:id="reset_btn" onAction="#delete_diagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/reset.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
+                  <JFXButton fx:id="convert_btn" onAction="#casual_toForrester" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/convert.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
+              </items>
+            </ToolBar>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <HBox layoutX="14.0" layoutY="52.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="125.0" style="-fx-border-color: #B5B5B5;">
+                           <children>
+                              <VBox layoutX="41.0" layoutY="7.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="36.0" prefWidth="125.0" text="Elementos" VBox.vgrow="ALWAYS">
+                                       <font>
+                                          <Font name="Bodoni MT Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <JFXButton fx:id="varopt_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#create_variable" prefHeight="25.0" prefWidth="999.0" text="Variable">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/variable.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="addopt_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#add_linktovariable" prefHeight="25.0" prefWidth="999.0" text="Relación(+)">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/order.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="minusopt_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#minus_linktovariable" prefHeight="25.0" prefWidth="999.0" text="Relación(-)">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/resta.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="addloop_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#create_addLoop" prefHeight="25.0" prefWidth="999.0" text="Bucle(+)">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/add.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="minusloop_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#create_minusLoop" prefHeight="25.0" prefWidth="999.0" text="Bucle(-)">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/minus.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </JFXButton>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="editor_viewer" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
