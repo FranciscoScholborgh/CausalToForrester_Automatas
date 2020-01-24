@@ -11,6 +11,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,10 +23,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import utils.graph.DiagramCreator;
+import utils.graph.factories.CausalDiagramEditor;
 
 /**
  *
@@ -69,10 +77,59 @@ public class MainMenuController implements Initializable {
     @FXML
     private AnchorPane editor_viewer;
     
+    private CausalDiagramEditor causalEditor;
+    
      
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
+        this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
+        SwingUtilities.invokeLater(() -> {
+            SwingNode swingNode = new SwingNode();
+            JComponent sceneView = this.causalEditor.createView();
+            JScrollPane panel = new JScrollPane (sceneView);
+            panel.getHorizontalScrollBar().setUnitIncrement (32);
+            panel.getHorizontalScrollBar().setBlockIncrement (256);
+            panel.getVerticalScrollBar().setUnitIncrement (32);
+            panel.getVerticalScrollBar().setBlockIncrement (256);
+            swingNode.setContent(panel);
+            Platform.runLater(() -> {
+                editor_viewer.getChildren().add(swingNode);
+                AnchorPane.setBottomAnchor(swingNode, 0.0);
+                AnchorPane.setLeftAnchor(swingNode, 0.0);
+                AnchorPane.setRightAnchor(swingNode, 0.0);
+                AnchorPane.setTopAnchor(swingNode, 0.0);
+            });
+        });
+        
+        /*
+        this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
+        SceneNode sceneView =  this.causalEditor.createView();
+        ScrollPane scrollPane = new javafx.scene.control.ScrollPane(sceneView);
+        scrollPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+	scrollPane.setStyle("-fx-focus-color: transparent;");
+        
+        scrollPane.widthProperty().addListener(e->{
+            Platform.runLater(()->{
+                sceneView.setWidth(scrollPane.getWidth());
+                sceneView.draw();
+            });
+        });
+        
+        scrollPane.heightProperty().addListener(e->{
+            Platform.runLater(()->{
+                sceneView.setHeight(scrollPane.getHeight());
+                sceneView.draw();
+            });
+        });
+        
+        editor_viewer.getChildren().add(scrollPane);
+        AnchorPane.setBottomAnchor(scrollPane, 0.0);
+        AnchorPane.setLeftAnchor(scrollPane, 0.0);
+        AnchorPane.setRightAnchor(scrollPane, 0.0);
+        AnchorPane.setTopAnchor(scrollPane, 0.0);*/
     }
     
     @FXML
