@@ -6,6 +6,9 @@
 package utils.graph.factories;
 
 import java.awt.Point;
+import java.util.Optional;
+import javafx.application.Platform;
+import javafx.scene.control.TextInputDialog;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -22,13 +25,15 @@ import utils.graph.events.RenameEventProvider;
 public class CausalDiagramEditor extends DiagramViewer{
     
     private final WidgetAction renameAction;
+    
+    private final WidgetAction createAction;
 
     public CausalDiagramEditor() {
         super();
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
-        this.getActions ().addAction (ActionFactory.createSelectAction (new CreateProvider ()));
+        this.createAction = ActionFactory.createSelectAction (new CreateProvider ());
     }
-    
+
     @Override
     public void createLabel(String label, Point location) {
         LayerWidget mainLayer = super.getMainLayer();
@@ -45,6 +50,14 @@ public class CausalDiagramEditor extends DiagramViewer{
         
         mainLayer.addChild (widget);
     }
+
+    public void enable_insertVariable (boolean enable) {
+        if(enable) {
+            this.getActions ().addAction (this.createAction);
+        } else {
+            this.getActions ().removeAction(this.createAction);
+        }
+    }
     
     private class CreateProvider implements SelectProvider {
 
@@ -60,9 +73,19 @@ public class CausalDiagramEditor extends DiagramViewer{
 
         @Override
         public void select (Widget widget, Point localLocation, boolean invertSelection) {
-            createLabel ("Double-click to rename me", localLocation);
+            Platform.runLater(() -> {
+                TextInputDialog dialog = new TextInputDialog("");
+                dialog.setHeaderText(null);
+                dialog.setTitle("Nombre variable");
+                
+                Optional<String> result = dialog.showAndWait();
+                String entered = "none.";
+                
+                if (result.isPresent()) {
+                    createLabel (result.get(), localLocation);
+                }
+            });
         }
 
-    }
-    
+    }  
 }

@@ -23,7 +23,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -79,10 +78,8 @@ public class MainMenuController implements Initializable {
     
     private CausalDiagramEditor causalEditor;
     
-     
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        
+    public void initialize(URL url, ResourceBundle rb) {    
         this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
         SwingUtilities.invokeLater(() -> {
             SwingNode swingNode = new SwingNode();
@@ -102,34 +99,6 @@ public class MainMenuController implements Initializable {
             });
         });
         
-        /*
-        this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
-        SceneNode sceneView =  this.causalEditor.createView();
-        ScrollPane scrollPane = new javafx.scene.control.ScrollPane(sceneView);
-        scrollPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-	scrollPane.setStyle("-fx-focus-color: transparent;");
-        
-        scrollPane.widthProperty().addListener(e->{
-            Platform.runLater(()->{
-                sceneView.setWidth(scrollPane.getWidth());
-                sceneView.draw();
-            });
-        });
-        
-        scrollPane.heightProperty().addListener(e->{
-            Platform.runLater(()->{
-                sceneView.setHeight(scrollPane.getHeight());
-                sceneView.draw();
-            });
-        });
-        
-        editor_viewer.getChildren().add(scrollPane);
-        AnchorPane.setBottomAnchor(scrollPane, 0.0);
-        AnchorPane.setLeftAnchor(scrollPane, 0.0);
-        AnchorPane.setRightAnchor(scrollPane, 0.0);
-        AnchorPane.setTopAnchor(scrollPane, 0.0);*/
     }
     
     @FXML
@@ -162,7 +131,7 @@ public class MainMenuController implements Initializable {
     void create_variable(ActionEvent event) {
         this.unlocked_elements();
         this.varopt_btn.setDisable(true);
-        
+        this.causalEditor.enable_insertVariable(true);
     }
     
     @FXML
@@ -206,6 +175,7 @@ public class MainMenuController implements Initializable {
     void edit_diagram(ActionEvent event) {
         this.unlocked_elements();
         this.edit_btn.setDisable(true);
+        this.causalEditor.enable_insertVariable(false);
     }
 
     @FXML

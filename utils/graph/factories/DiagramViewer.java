@@ -74,6 +74,5 @@ public abstract class DiagramViewer extends Scene{
 
     public void setSelectAction(WidgetAction selectAction) {
         this.selectAction = selectAction;
-    }
-    
+    }   
 }
