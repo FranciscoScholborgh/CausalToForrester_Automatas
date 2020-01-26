@@ -11,7 +11,6 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.LayerWidget;
-import org.netbeans.api.visual.widget.Scene;
 import utils.graph.events.SelectEventProvider;
 
 /**
@@ -89,7 +88,5 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
 
     public void setSelectAction(WidgetAction selectAction) {
         this.selectAction = selectAction;
-    }
-
-     
+    }   
 }

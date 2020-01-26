@@ -7,6 +7,7 @@ package utils.graph.factories;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -15,10 +16,8 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
-import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import utils.graph.events.RenameEventProvider;
@@ -29,10 +28,8 @@ import utils.graph.events.RenameEventProvider;
  */
 public class CausalDiagramEditor extends DiagramViewer{
     
-    private final LayerWidget mainLayer;
-    private final LayerWidget connectionLayer;
-    private final LayerWidget interractionLayer;
-
+    private ArrayList<LabelWidget> variables;
+    
     private final WidgetAction createAction;
     private final WidgetAction connectAction;
     private final WidgetAction reconnectAction;
@@ -42,45 +39,32 @@ public class CausalDiagramEditor extends DiagramViewer{
     private long edgeCounter = 0;
 
     public CausalDiagramEditor () {
-        this.mainLayer = super.getMainLayer();
-        this.interractionLayer = super.getInterractionLayer();
-        this.connectionLayer = super.getConnectionLayer();
+        this.variables = new ArrayList<>();
         
         this.createAction = new SceneCreateAction ();
-        this.connectAction = ActionFactory.createConnectAction (this.interractionLayer, new SceneConnectProvider ());
+        this.connectAction = ActionFactory.createConnectAction (super.getInterractionLayer(), new SceneConnectProvider ());
         this.reconnectAction = ActionFactory.createReconnectAction (new SceneReconnectProvider ());
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
-        
-        this.addChild (this.mainLayer);
-        this.addChild (this.connectionLayer);
-        this.addChild (this.interractionLayer);
+           
+        this.addChild (super.getMainLayer());
+        this.addChild (super.getConnectionLayer());
+        this.addChild (super.getInterractionLayer());
+    }
 
-        //this.getActions ().addAction (createAction);
+    public ArrayList<LabelWidget> getVariables() {
+        return variables;
+    }
 
+    public void setVariables(ArrayList<LabelWidget> variables) {
+        this.variables = variables;
     }
     
     @Override
-    public void createLabel(String label, Point location) {
-        LayerWidget mainLayer = super.getMainLayer();
-        Scene scene = mainLayer.getScene ();
-        Widget widget = new LabelWidget (scene, label);
-
-        widget.setOpaque (true);
-        widget.setPreferredLocation (location);
-        widget.getActions ().addAction (createObjectHoverAction ());
-        widget.setBorder (BorderFactory.createLineBorder (4));
-
-        //widget.getActions ().addAction (super.getSelectAction());
-        widget.getActions ().addAction (this.renameAction);
-        //widget.getActions ().addAction (super.getResizeAction());
-        //widget.getActions ().addAction (super.getMoveAction());
-        widget.getActions ().addAction (this.connectAction);
-        
-        
-        mainLayer.addChild (widget);
+    public void createLabel(String node, Point location) {
+        System.out.println("Not done");
     }
 
-    public void enable_insertVariable (boolean enable) {
+    private void enable_insertVariable (boolean enable) {
         if(enable) {
             this.getActions ().addAction (this.createAction);
         } else {
@@ -88,18 +72,49 @@ public class CausalDiagramEditor extends DiagramViewer{
         }
     }
     
+    private void enable_relationVariables (boolean enable) {
+        if(enable) {
+            variables.forEach((variable) -> {
+                variable.getActions().addAction(this.connectAction);
+                variable.getActions().removeAction(super.getMoveAction());
+            });
+        } else {
+            this.variables.forEach((variable) -> {
+                variable.getActions().removeAction(this.connectAction);
+                variable.getActions().addAction(super.getMoveAction());
+            });
+        }
+    }
+    
+    public void activate_insertVariable() {
+        this.enable_insertVariable(true);
+        this.enable_relationVariables(false);
+    }
+    
+    public void activate_relationVariables() {
+        this.enable_insertVariable(false);
+        this.enable_relationVariables(true);
+    }
+    
+    public void deactivate_all () {
+        this.enable_insertVariable(false);
+        this.enable_relationVariables(false);
+    }
 
+    @Override
     protected Widget attachNodeWidget (String node) {
         LabelWidget label = new LabelWidget (this, node);
         //label.setBorder (BorderFactory.createLineBorder (4));
         label.getActions ().addAction (createObjectHoverAction ());
         label.getActions ().addAction (this.renameAction);
-        //label.getActions ().addAction (super.getMoveAction());
-        label.getActions ().addAction (this.connectAction);
-        this.mainLayer.addChild (label);
+        label.getActions ().addAction (super.getMoveAction());
+        //label.getActions ().addAction (this.connectAction);
+        super.getMainLayer().addChild (label);
+        this.variables.add(label);
         return label;
     }
 
+    @Override
     protected Widget attachEdgeWidget (String edge) {
         ConnectionWidget connection = new ConnectionWidget (this);
         connection.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
@@ -107,15 +122,17 @@ public class CausalDiagramEditor extends DiagramViewer{
         connection.getActions ().addAction (createObjectHoverAction ());
         connection.getActions ().addAction (createSelectAction ());
         connection.getActions ().addAction (reconnectAction);
-        this.connectionLayer.addChild (connection);
+        super.getConnectionLayer().addChild (connection);
         return connection;
     }
 
+    @Override
     protected void attachEdgeSourceAnchor (String edge, String oldSourceNode, String sourceNode) {
         Widget w = sourceNode != null ? findWidget (sourceNode) : null;
         ((ConnectionWidget) findWidget (edge)).setSourceAnchor (AnchorFactory.createRectangularAnchor (w));
     }
 
+    @Override
     protected void attachEdgeTargetAnchor (String edge, String oldTargetNode, String targetNode) {
         Widget w = targetNode != null ? findWidget (targetNode) : null;
         ((ConnectionWidget) findWidget (edge)).setTargetAnchor (AnchorFactory.createRectangularAnchor (w));
@@ -123,6 +140,7 @@ public class CausalDiagramEditor extends DiagramViewer{
 
     private class SceneCreateAction extends WidgetAction.Adapter {
 
+        @Override
         public WidgetAction.State mousePressed (Widget widget, WidgetAction.WidgetMouseEvent event) {
             if (event.getClickCount () == 1)
                 if (event.getButton () == MouseEvent.BUTTON1 || event.getButton () == MouseEvent.BUTTON2) {
@@ -133,7 +151,6 @@ public class CausalDiagramEditor extends DiagramViewer{
                 }
             return WidgetAction.State.REJECTED;
         }
-
     }
 
     private class SceneConnectProvider implements ConnectProvider {
@@ -141,12 +158,14 @@ public class CausalDiagramEditor extends DiagramViewer{
         private String source = null;
         private String target = null;
 
+        @Override
         public boolean isSourceWidget (Widget sourceWidget) {
             Object object = findObject (sourceWidget);
             source = isNode (object) ? (String) object : null;
             return source != null;
         }
 
+        @Override
         public ConnectorState isTargetWidget (Widget sourceWidget, Widget targetWidget) {
             Object object = findObject (targetWidget);
             target = isNode (object) ? (String) object : null;
@@ -155,21 +174,23 @@ public class CausalDiagramEditor extends DiagramViewer{
             return object != null ? ConnectorState.REJECT_AND_STOP : ConnectorState.REJECT;
         }
 
+        @Override
         public boolean hasCustomTargetWidgetResolver (Scene scene) {
             return false;
         }
 
+        @Override
         public Widget resolveTargetWidget (Scene scene, Point sceneLocation) {
             return null;
         }
 
+        @Override
         public void createConnection (Widget sourceWidget, Widget targetWidget) {
             String edge = "edge" + edgeCounter ++;
             addEdge (edge);
             setEdgeSource (edge, source);
             setEdgeTarget (edge, target);
         }
-
     }
 
     private class SceneReconnectProvider implements ReconnectProvider {
@@ -178,12 +199,15 @@ public class CausalDiagramEditor extends DiagramViewer{
         String originalNode;
         String replacementNode;
 
+        @Override
         public void reconnectingStarted (ConnectionWidget connectionWidget, boolean reconnectingSource) {
         }
 
+        @Override
         public void reconnectingFinished (ConnectionWidget connectionWidget, boolean reconnectingSource) {
         }
 
+        @Override
         public boolean isSourceReconnectable (ConnectionWidget connectionWidget) {
             Object object = findObject (connectionWidget);
             edge = isEdge (object) ? (String) object : null;
@@ -191,6 +215,7 @@ public class CausalDiagramEditor extends DiagramViewer{
             return originalNode != null;
         }
 
+        @Override
         public boolean isTargetReconnectable (ConnectionWidget connectionWidget) {
             Object object = findObject (connectionWidget);
             edge = isEdge (object) ? (String) object : null;
@@ -198,6 +223,7 @@ public class CausalDiagramEditor extends DiagramViewer{
             return originalNode != null;
         }
 
+        @Override
         public ConnectorState isReplacementWidget (ConnectionWidget connectionWidget, Widget replacementWidget, boolean reconnectingSource) {
             Object object = findObject (replacementWidget);
             replacementNode = isNode (object) ? (String) object : null;
@@ -206,14 +232,17 @@ public class CausalDiagramEditor extends DiagramViewer{
             return object != null ? ConnectorState.REJECT_AND_STOP : ConnectorState.REJECT;
         }
 
+        @Override
         public boolean hasCustomReplacementWidgetResolver (Scene scene) {
             return false;
         }
 
+        @Override
         public Widget resolveReplacementWidget (Scene scene, Point sceneLocation) {
             return null;
         }
         
+        @Override
         public void reconnect (ConnectionWidget connectionWidget, Widget replacementWidget, boolean reconnectingSource) {
             if (replacementWidget == null)
                 removeEdge (edge);
@@ -222,7 +251,6 @@ public class CausalDiagramEditor extends DiagramViewer{
             else
                 setEdgeTarget (edge, replacementNode);
         }
-
     }
 }
 
