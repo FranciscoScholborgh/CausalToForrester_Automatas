@@ -73,24 +73,6 @@
                                           </ImageView>
                                        </graphic>
                                     </JFXButton>
-                                    <JFXButton fx:id="addloop_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#create_addLoop" prefHeight="25.0" prefWidth="999.0" text="Bucle(+)">
-                                       <graphic>
-                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/add.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </JFXButton>
-                                    <JFXButton fx:id="minusloop_btn" alignment="BASELINE_LEFT" graphicTextGap="15.0" onAction="#create_minusLoop" prefHeight="25.0" prefWidth="999.0" text="Bucle(-)">
-                                       <graphic>
-                                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/minus.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </JFXButton>
                                  </children>
                               </VBox>
                            </children>

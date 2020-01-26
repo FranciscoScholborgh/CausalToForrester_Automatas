@@ -66,13 +66,7 @@ public class MainMenuController implements Initializable {
 
     @FXML
     private JFXButton minusopt_btn;
-
-    @FXML
-    private JFXButton addloop_btn;
-
-    @FXML
-    private JFXButton minusloop_btn;
-    
+  
     @FXML
     private AnchorPane editor_viewer;
     
@@ -122,8 +116,6 @@ public class MainMenuController implements Initializable {
         this.varopt_btn.setDisable(false);
         this.addopt_btn.setDisable(false);
         this.minusopt_btn.setDisable(false);
-        this.addloop_btn.setDisable(false);
-        this.minusloop_btn.setDisable(false);
         this.edit_btn.setDisable(false);
     }
     
@@ -148,18 +140,6 @@ public class MainMenuController implements Initializable {
         this.causalEditor.activate_relationVariables();
     }
     
-    @FXML
-    void create_addLoop(ActionEvent event) {
-        this.unlocked_elements();
-        this.addloop_btn.setDisable(true);
-    }
-
-    @FXML
-    void create_minusLoop(ActionEvent event) {
-        this.unlocked_elements();
-        this.minusloop_btn.setDisable(true);
-    }
-
     @FXML
     void delete_diagram(ActionEvent event) {
         Alert alert = new Alert(AlertType.CONFIRMATION, "¿Desea borrar los cambios realizados en el diagrama?", ButtonType.YES, ButtonType.NO); 
