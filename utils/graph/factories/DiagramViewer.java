@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Point;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
+import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import utils.graph.events.SelectEventProvider;
@@ -17,9 +18,13 @@ import utils.graph.events.SelectEventProvider;
  *
  * @author frank
  */
-public abstract class DiagramViewer extends Scene{
+public abstract class DiagramViewer extends GraphScene.StringGraph{
     
     private LayerWidget mainLayer;
+    
+    private LayerWidget interractionLayer;
+    
+    private LayerWidget connectionLayer;
     
     private WidgetAction moveAction;
     
@@ -33,8 +38,11 @@ public abstract class DiagramViewer extends Scene{
         this.mainLayer = new LayerWidget (this);
         this.addChild (mainLayer);
 
-        LayerWidget interractionLayer = new LayerWidget (this);
-        this.addChild (interractionLayer);
+        this.interractionLayer = new LayerWidget (this);
+        this.addChild (this.interractionLayer);
+        
+        this.connectionLayer = new LayerWidget (this);
+        this.addChild (this.connectionLayer);
         
         //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
@@ -51,6 +59,22 @@ public abstract class DiagramViewer extends Scene{
         this.mainLayer = mainLayer;
     }
 
+    public LayerWidget getInterractionLayer() {
+        return interractionLayer;
+    }
+
+    public void setInterractionLayer(LayerWidget interractionLayer) {
+        this.interractionLayer = interractionLayer;
+    }
+
+    public LayerWidget getConnectionLayer() {
+        return connectionLayer;
+    }
+
+    public void setConnectionLayer(LayerWidget connectionLayer) {
+        this.connectionLayer = connectionLayer;
+    }
+
     public WidgetAction getMoveAction() {
         return moveAction;
     }
@@ -58,15 +82,6 @@ public abstract class DiagramViewer extends Scene{
     public void setMoveAction(WidgetAction moveAction) {
         this.moveAction = moveAction;
     }
-    
-    /*
-    public WidgetAction getResizeAction() {
-        return resizeAction;
-    }
-
-    public void setResizeAction(WidgetAction resizeAction) {
-        this.resizeAction = resizeAction;
-    }*/
 
     public WidgetAction getSelectAction() {
         return selectAction;
@@ -74,5 +89,7 @@ public abstract class DiagramViewer extends Scene{
 
     public void setSelectAction(WidgetAction selectAction) {
         this.selectAction = selectAction;
-    }   
+    }
+
+     
 }
