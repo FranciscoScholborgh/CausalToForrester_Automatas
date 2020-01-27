@@ -30,6 +30,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     //private WidgetAction resizeAction;
         
     private WidgetAction selectAction;
+    
+    private String relationType;
 
     public DiagramViewer() {
         this.setBackground (Color.WHITE);
@@ -89,4 +91,12 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     public void setSelectAction(WidgetAction selectAction) {
         this.selectAction = selectAction;
     }   
+
+    public String getRelationType() {
+        return relationType;
+    }
+
+    public void setRelationType(String relationType) {
+        this.relationType = relationType;
+    }
 }

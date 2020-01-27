@@ -130,14 +130,14 @@ public class MainMenuController implements Initializable {
     void add_linktovariable(ActionEvent event) {
         this.unlocked_elements();
         this.addopt_btn.setDisable(true);  
-        this.causalEditor.activate_relationVariables();
+        this.causalEditor.activate_relationVariables("+");
     }
     
     @FXML
     void minus_linktovariable(ActionEvent event) {
         this.unlocked_elements();
         this.minusopt_btn.setDisable(true);
-        this.causalEditor.activate_relationVariables();
+        this.causalEditor.activate_relationVariables("-");
     }
     
     @FXML

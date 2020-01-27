@@ -8,6 +8,9 @@ package utils.graph.factories;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Optional;
+import javafx.application.Platform;
+import javafx.scene.control.TextInputDialog;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -16,6 +19,8 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.border.BorderFactory;
+import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -34,15 +39,14 @@ public class CausalDiagramEditor extends DiagramViewer{
     private final WidgetAction connectAction;
     private final WidgetAction reconnectAction;
     private final WidgetAction renameAction;
-
-    private long nodeCounter = 0;
+    
     private long edgeCounter = 0;
 
     public CausalDiagramEditor () {
         this.variables = new ArrayList<>();
         
         this.createAction = new SceneCreateAction ();
-        this.connectAction = ActionFactory.createConnectAction (super.getInterractionLayer(), new SceneConnectProvider ());
+        this.connectAction = ActionFactory.createConnectAction (super.getInterractionLayer(), new SceneConnectProvider (this));
         this.reconnectAction = ActionFactory.createReconnectAction (new SceneReconnectProvider ());
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
            
@@ -58,7 +62,7 @@ public class CausalDiagramEditor extends DiagramViewer{
     public void setVariables(ArrayList<LabelWidget> variables) {
         this.variables = variables;
     }
-    
+
     @Override
     public void createLabel(String node, Point location) {
         System.out.println("Not done");
@@ -91,8 +95,9 @@ public class CausalDiagramEditor extends DiagramViewer{
         this.enable_relationVariables(false);
     }
     
-    public void activate_relationVariables() {
+    public void activate_relationVariables(String type) {
         this.enable_insertVariable(false);
+        super.setRelationType(type);
         this.enable_relationVariables(true);
     }
     
@@ -144,9 +149,18 @@ public class CausalDiagramEditor extends DiagramViewer{
         public WidgetAction.State mousePressed (Widget widget, WidgetAction.WidgetMouseEvent event) {
             if (event.getClickCount () == 1)
                 if (event.getButton () == MouseEvent.BUTTON1 || event.getButton () == MouseEvent.BUTTON2) {
+                    Platform.runLater(() -> {
+                        TextInputDialog dialog = new TextInputDialog("");
+                        dialog.setHeaderText(null);
+                        dialog.setTitle("Nombre variable");
 
-                    addNode ("node" + nodeCounter ++).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                        Optional<String> result = dialog.showAndWait();
+                        String entered = "none.";
 
+                        if (result.isPresent()) {
+                            addNode (result.get()).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                        }
+                    });
                     return WidgetAction.State.CONSUMED;
                 }
             return WidgetAction.State.REJECTED;
@@ -157,7 +171,12 @@ public class CausalDiagramEditor extends DiagramViewer{
 
         private String source = null;
         private String target = null;
+        private DiagramViewer scene;
 
+        public SceneConnectProvider(DiagramViewer scene) {
+            this.scene = scene;
+        }
+        
         @Override
         public boolean isSourceWidget (Widget sourceWidget) {
             Object object = findObject (sourceWidget);
@@ -186,10 +205,24 @@ public class CausalDiagramEditor extends DiagramViewer{
 
         @Override
         public void createConnection (Widget sourceWidget, Widget targetWidget) {
-            String edge = "edge" + edgeCounter ++;
-            addEdge (edge);
-            setEdgeSource (edge, source);
-            setEdgeTarget (edge, target);
+            //String edge = "edge" + edgeCounter ++;
+            //addEdge (edge);
+            //setEdgeSource (edge, source);
+            //setEdgeTarget (edge, target);
+            ConnectionWidget connection = new ConnectionWidget (this.scene.getScene());
+            connection.setSourceAnchor (AnchorFactory.createDirectionalAnchor (sourceWidget, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
+            connection.setTargetAnchor (AnchorFactory.createDirectionalAnchor (targetWidget, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
+            connection.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
+            connection.setPaintControlPoints (true);
+            connection.setControlPointShape (PointShape.SQUARE_FILLED_BIG);
+            //connection.setRouter (RouterFactory.createOrthogonalSearchRouter (getMainLayer()));
+            connection.getActions ().addAction (ActionFactory.createAddRemoveControlPointAction ());
+            connection.getActions ().addAction (ActionFactory.createFreeMoveControlPointAction ());
+            LabelWidget signo = new LabelWidget (scene.getScene(), scene.getRelationType());
+            signo.setOpaque (true);
+            connection.addChild (signo);
+            connection.setConstraint (signo, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
+            getConnectionLayer().addChild (connection);
         }
     }
 
