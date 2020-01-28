@@ -10,6 +10,7 @@ import java.awt.Point;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.widget.BirdViewController;
 import org.netbeans.api.visual.widget.LayerWidget;
 import utils.graph.events.SelectEventProvider;
 
@@ -19,17 +20,19 @@ import utils.graph.events.SelectEventProvider;
  */
 public abstract class DiagramViewer extends GraphScene.StringGraph{
     
-    private LayerWidget mainLayer;
+    private final LayerWidget mainLayer;
     
-    private LayerWidget interractionLayer;
+    private final LayerWidget interractionLayer;
     
-    private LayerWidget connectionLayer;
+    private final LayerWidget connectionLayer;
     
-    private WidgetAction moveAction;
+    private final WidgetAction moveAction;
     
     //private WidgetAction resizeAction;
         
-    private WidgetAction selectAction;
+    private final WidgetAction selectAction;
+       
+    private final BirdViewController birdViewController;
     
     private String relationType;
 
@@ -48,6 +51,10 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
         this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider ());
+        this.getActions().addAction(ActionFactory.createZoomAction ());
+        this.getActions().addAction(ActionFactory.createPanAction());
+        
+        this.birdViewController = this.createBirdView();
     }
     
     public abstract void createLabel (String label, Point location);
@@ -56,41 +63,21 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         return mainLayer;
     }
 
-    public void setMainLayer(LayerWidget mainLayer) {
-        this.mainLayer = mainLayer;
-    }
-
     public LayerWidget getInterractionLayer() {
         return interractionLayer;
-    }
-
-    public void setInterractionLayer(LayerWidget interractionLayer) {
-        this.interractionLayer = interractionLayer;
     }
 
     public LayerWidget getConnectionLayer() {
         return connectionLayer;
     }
 
-    public void setConnectionLayer(LayerWidget connectionLayer) {
-        this.connectionLayer = connectionLayer;
-    }
-
     public WidgetAction getMoveAction() {
         return moveAction;
-    }
-
-    public void setMoveAction(WidgetAction moveAction) {
-        this.moveAction = moveAction;
     }
 
     public WidgetAction getSelectAction() {
         return selectAction;
     }
-
-    public void setSelectAction(WidgetAction selectAction) {
-        this.selectAction = selectAction;
-    }   
 
     public String getRelationType() {
         return relationType;
@@ -98,5 +85,13 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
 
     public void setRelationType(String relationType) {
         this.relationType = relationType;
+    }
+    
+    public void enable_birdview(boolean enable) {
+        if(enable){
+            this.birdViewController.show();
+        } else {
+            this.birdViewController.hide();
+        }
     }
 }

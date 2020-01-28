@@ -19,7 +19,6 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
@@ -73,14 +72,16 @@ public class CausalDiagramEditor extends DiagramViewer{
             this.getActions ().addAction (this.createAction);
         } else {
             this.getActions ().removeAction(this.createAction);
-        }
+        }        
     }
     
     private void enable_relationVariables (boolean enable) {
         if(enable) {
             variables.forEach((variable) -> {
-                variable.getActions().addAction(this.connectAction);
-                variable.getActions().removeAction(super.getMoveAction());
+                if(!variable.getActions().getActions().contains(this.connectAction)) {
+                    variable.getActions().addAction(this.connectAction);
+                    variable.getActions().removeAction(this.getMoveAction());
+                }           
             });
         } else {
             this.variables.forEach((variable) -> {

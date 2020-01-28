@@ -8,6 +8,8 @@ package controlador;
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +53,8 @@ public class MainMenuController implements Initializable {
 
     @FXML
     private JFXButton edit_btn;
+    
+    private JFXButton birdview_btn;
 
     @FXML
     private JFXButton reset_btn;
@@ -72,8 +76,9 @@ public class MainMenuController implements Initializable {
     
     private CausalDiagramEditor causalEditor;
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {    
+    private Map<String, Boolean> active_utils;
+    
+    private void create_newDiagramEditor() {
         this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
         SwingUtilities.invokeLater(() -> {
             SwingNode swingNode = new SwingNode();
@@ -92,7 +97,25 @@ public class MainMenuController implements Initializable {
                 AnchorPane.setTopAnchor(swingNode, 0.0);
             });
         });
-        
+    }
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {    
+        this.create_newDiagramEditor();
+        this.active_utils = new HashMap<>();
+        this.active_utils.put("BIRD_VIEW", Boolean.FALSE);
+        this.active_utils.put("ZOOM", Boolean.FALSE);
+    }
+   
+    @FXML
+    void birdView_diagram(ActionEvent event) {
+        if(this.active_utils.get("BIRD_VIEW")) {
+            this.causalEditor.enable_birdview(false);
+            this.active_utils.replace("BIRD_VIEW", Boolean.FALSE);
+        } else {
+            this.causalEditor.enable_birdview(true);
+            this.active_utils.replace("BIRD_VIEW", Boolean.TRUE);
+        }
     }
     
     @FXML
@@ -147,9 +170,9 @@ public class MainMenuController implements Initializable {
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.YES) {
-            System.out.println("Llama funcion para limpiar pantalla");
-        } else {
-            System.out.println("No pasa nah xD");
+            this.editor_viewer.getChildren().clear();
+            this.create_newDiagramEditor();
+            this.unlocked_elements();
         }
     }
     
