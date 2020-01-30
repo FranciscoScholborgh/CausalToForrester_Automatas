@@ -49,9 +49,9 @@ public class CausalDiagramEditor extends DiagramViewer{
         this.reconnectAction = ActionFactory.createReconnectAction (new SceneReconnectProvider ());
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
            
-        this.addChild (super.getMainLayer());
-        this.addChild (super.getConnectionLayer());
-        this.addChild (super.getInterractionLayer());
+        this.addChild(super.getMainLayer());
+        this.addChild(super.getConnectionLayer());
+        this.addChild(super.getInterractionLayer());
     }
 
     public ArrayList<LabelWidget> getVariables() {
@@ -69,7 +69,9 @@ public class CausalDiagramEditor extends DiagramViewer{
 
     private void enable_insertVariable (boolean enable) {
         if(enable) {
-            this.getActions ().addAction (this.createAction);
+            if(!this.getActions().getActions().contains(this.createAction)) {
+                this.getActions ().addAction (this.createAction);
+            }           
         } else {
             this.getActions ().removeAction(this.createAction);
         }        
@@ -81,32 +83,51 @@ public class CausalDiagramEditor extends DiagramViewer{
                 if(!variable.getActions().getActions().contains(this.connectAction)) {
                     variable.getActions().addAction(this.connectAction);
                     variable.getActions().removeAction(this.getMoveAction());
-                }           
+                }
             });
         } else {
             this.variables.forEach((variable) -> {
                 variable.getActions().removeAction(this.connectAction);
-                variable.getActions().addAction(super.getMoveAction());
-            });
+                variable.getActions().addAction(this.getMoveAction());
+            });         
         }
     }
     
     public void activate_insertVariable() {
         this.enable_insertVariable(true);
         this.enable_relationVariables(false);
+        this.enable_deleteMode(false);
     }
     
     public void activate_relationVariables(String type) {
         this.enable_insertVariable(false);
         super.setRelationType(type);
         this.enable_relationVariables(true);
+        this.enable_deleteMode(false);
     }
     
     public void deactivate_all () {
         this.enable_insertVariable(false);
         this.enable_relationVariables(false);
+        this.enable_deleteMode(false);
     }
-
+    
+    public void enable_deleteMode(boolean enable) {
+        if (enable) {
+            for (LabelWidget variable : variables) {
+                if(variable.getParentWidget() != null && !variable.getActions().getActions().contains(this.getDeleAction())){
+                    variable.getActions().addAction(this.getDeleAction());
+                }
+            }
+        } else {
+            for (LabelWidget variable : variables) {
+                if(variable.getParentWidget() != null) {
+                    variable.getActions().removeAction(this.getDeleAction());
+                }
+            }
+        }
+    }
+       
     @Override
     protected Widget attachNodeWidget (String node) {
         LabelWidget label = new LabelWidget (this, node);

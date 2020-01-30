@@ -54,7 +54,11 @@ public class MainMenuController implements Initializable {
     @FXML
     private JFXButton edit_btn;
     
+    @FXML
     private JFXButton birdview_btn;
+    
+    @FXML
+    private JFXButton delete_btn;
 
     @FXML
     private JFXButton reset_btn;
@@ -140,6 +144,7 @@ public class MainMenuController implements Initializable {
         this.addopt_btn.setDisable(false);
         this.minusopt_btn.setDisable(false);
         this.edit_btn.setDisable(false);
+        this.delete_btn.setDisable(false);
     }
     
     @FXML
@@ -181,6 +186,13 @@ public class MainMenuController implements Initializable {
         this.unlocked_elements();
         this.edit_btn.setDisable(true);
         this.causalEditor.deactivate_all();
+    }
+    
+    @FXML
+    void delete_nodeFromDiagram(ActionEvent event) {
+        this.unlocked_elements();
+        this.delete_btn.setDisable(true);
+        this.causalEditor.enable_deleteMode(true);
     }
 
     @FXML

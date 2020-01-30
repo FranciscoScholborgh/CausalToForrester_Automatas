@@ -30,6 +30,7 @@
               <items>
                   <JFXButton fx:id="edit_btn" disable="true" onAction="#edit_diagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/edit.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
                   <JFXButton fx:id="birdview_btn" onAction="#birdView_diagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/bird_view.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
+                  <JFXButton fx:id="delete_btn" onAction="#delete_nodeFromDiagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/delete.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
                   <JFXButton fx:id="reset_btn" onAction="#delete_diagram" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/reset.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
                   <JFXButton fx:id="convert_btn" onAction="#casual_toForrester" prefHeight="30.0" prefWidth="45.0" style="-fx-background-image: url('icons/convert.png'); -fx-background-size: 24px; -fx-background-repeat: no-repeat; -fx-background-position: 50%;" text=" " />
               </items>

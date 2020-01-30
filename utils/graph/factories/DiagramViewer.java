@@ -12,6 +12,7 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.BirdViewController;
 import org.netbeans.api.visual.widget.LayerWidget;
+import utils.graph.events.DeleteEventProvider;
 import utils.graph.events.SelectEventProvider;
 
 /**
@@ -31,6 +32,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     //private WidgetAction resizeAction;
         
     private final WidgetAction selectAction;
+    
+    private final WidgetAction deleAction;
        
     private final BirdViewController birdViewController;
     
@@ -50,7 +53,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         
         //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
-        this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider ());
+        this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider (), false);
+        this.deleAction = ActionFactory.createSelectAction(new DeleteEventProvider(), false);
         this.getActions().addAction(ActionFactory.createZoomAction ());
         this.getActions().addAction(ActionFactory.createPanAction());
         
@@ -58,7 +62,7 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     }
     
     public abstract void createLabel (String label, Point location);
-
+    
     public LayerWidget getMainLayer() {
         return mainLayer;
     }
@@ -77,6 +81,14 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
 
     public WidgetAction getSelectAction() {
         return selectAction;
+    }
+
+    public WidgetAction getDeleAction() {
+        return deleAction;
+    }
+
+    public BirdViewController getBirdViewController() {
+        return birdViewController;
     }
 
     public String getRelationType() {
