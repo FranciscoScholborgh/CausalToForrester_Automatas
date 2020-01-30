@@ -33,21 +33,29 @@ import utils.graph.events.RenameEventProvider;
 public class CausalDiagramEditor extends DiagramViewer{
     
     private ArrayList<LabelWidget> variables;
+    private ArrayList<ConnectionWidget> connections;
     
     private final WidgetAction createAction;
     private final WidgetAction connectAction;
     private final WidgetAction reconnectAction;
     private final WidgetAction renameAction;
     
+    private final WidgetAction addRemoveControlPoint; 
+    private final WidgetAction freeMoveControlPoint; 
+    
     private long edgeCounter = 0;
 
     public CausalDiagramEditor () {
         this.variables = new ArrayList<>();
+        this.connections = new ArrayList<>();
         
         this.createAction = new SceneCreateAction ();
         this.connectAction = ActionFactory.createConnectAction (super.getInterractionLayer(), new SceneConnectProvider (this));
         this.reconnectAction = ActionFactory.createReconnectAction (new SceneReconnectProvider ());
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
+        
+        this.addRemoveControlPoint = ActionFactory.createAddRemoveControlPointAction ();
+        this.freeMoveControlPoint = ActionFactory.createFreeMoveControlPointAction ();
            
         this.addChild(super.getMainLayer());
         this.addChild(super.getConnectionLayer());
@@ -62,9 +70,29 @@ public class CausalDiagramEditor extends DiagramViewer{
         this.variables = variables;
     }
 
+    public ArrayList<ConnectionWidget> getConnections() {
+        return connections;
+    }
+
+    public void setConnections(ArrayList<ConnectionWidget> connections) {
+        this.connections = connections;
+    }
+
+    protected WidgetAction getAddRemoveControlPoint() {
+        return addRemoveControlPoint;
+    }
+    
+    protected WidgetAction getFreeMoveControlPoint() {
+        return freeMoveControlPoint;
+    }
+    
     @Override
     public void createLabel(String node, Point location) {
         System.out.println("Not done");
+    }
+    
+    protected void addRelation(ConnectionWidget connection) {
+        this.connections.add(connection);
     }
 
     private void enable_insertVariable (boolean enable) {
@@ -79,7 +107,7 @@ public class CausalDiagramEditor extends DiagramViewer{
     
     private void enable_relationVariables (boolean enable) {
         if(enable) {
-            variables.forEach((variable) -> {
+            this.variables.forEach((variable) -> {
                 if(!variable.getActions().getActions().contains(this.connectAction)) {
                     variable.getActions().addAction(this.connectAction);
                     variable.getActions().removeAction(this.getMoveAction());
@@ -114,17 +142,23 @@ public class CausalDiagramEditor extends DiagramViewer{
     
     public void enable_deleteMode(boolean enable) {
         if (enable) {
-            for (LabelWidget variable : variables) {
-                if(variable.getParentWidget() != null && !variable.getActions().getActions().contains(this.getDeleAction())){
-                    variable.getActions().addAction(this.getDeleAction());
-                }
-            }
+            this.variables.stream().filter((variable) -> (variable.getParentWidget() != null && !variable.getActions().getActions().contains(this.getDeleteAction()))).forEachOrdered((variable) -> {
+                variable.getActions().addAction(this.getDeleteAction());
+            });
+            this.connections.stream().filter((connection) -> (!connection.getActions().getActions().contains(this.getDeleteAction()))).forEachOrdered((connection) -> {
+                connection.getActions().addAction(this.getDeleteAction());
+                connection.getActions ().removeAction(this.addRemoveControlPoint);
+                connection.getActions ().removeAction(this.freeMoveControlPoint);
+            });
         } else {
-            for (LabelWidget variable : variables) {
-                if(variable.getParentWidget() != null) {
-                    variable.getActions().removeAction(this.getDeleAction());
-                }
-            }
+            this.variables.stream().filter((variable) -> (variable.getParentWidget() != null)).forEachOrdered((variable) -> {
+                variable.getActions().removeAction(this.getDeleteAction());
+            });
+            this.connections.stream().filter((connection) -> (connection.getParentWidget() != null)).forEachOrdered((connection) -> {
+                connection.getActions().removeAction(this.getDeleteAction());
+                connection.getActions ().addAction(this.addRemoveControlPoint);
+                connection.getActions ().addAction(this.freeMoveControlPoint);
+            });
         }
     }
        
@@ -193,9 +227,9 @@ public class CausalDiagramEditor extends DiagramViewer{
 
         private String source = null;
         private String target = null;
-        private DiagramViewer scene;
+        private final CausalDiagramEditor scene;
 
-        public SceneConnectProvider(DiagramViewer scene) {
+        public SceneConnectProvider(CausalDiagramEditor scene) {
             this.scene = scene;
         }
         
@@ -238,13 +272,15 @@ public class CausalDiagramEditor extends DiagramViewer{
             connection.setPaintControlPoints (true);
             connection.setControlPointShape (PointShape.SQUARE_FILLED_BIG);
             //connection.setRouter (RouterFactory.createOrthogonalSearchRouter (getMainLayer()));
-            connection.getActions ().addAction (ActionFactory.createAddRemoveControlPointAction ());
-            connection.getActions ().addAction (ActionFactory.createFreeMoveControlPointAction ());
-            LabelWidget signo = new LabelWidget (scene.getScene(), scene.getRelationType());
+            connection.getActions ().addAction (this.scene.getAddRemoveControlPoint());
+            connection.getActions ().addAction (this.scene.getFreeMoveControlPoint());
+            //connection.getActions().addAction(this.scene.getDeleteAction());
+            LabelWidget signo = new LabelWidget (this.scene.getScene(), this.scene.getRelationType());
             signo.setOpaque (true);
             connection.addChild (signo);
             connection.setConstraint (signo, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
             getConnectionLayer().addChild (connection);
+            this.scene.addRelation(connection);
         }
     }
 

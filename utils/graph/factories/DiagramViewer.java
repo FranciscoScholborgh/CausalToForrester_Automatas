@@ -33,7 +33,7 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         
     private final WidgetAction selectAction;
     
-    private final WidgetAction deleAction;
+    private final WidgetAction deleteAction;
        
     private final BirdViewController birdViewController;
     
@@ -54,7 +54,7 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
         this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider (), false);
-        this.deleAction = ActionFactory.createSelectAction(new DeleteEventProvider(), false);
+        this.deleteAction = ActionFactory.createSelectAction(new DeleteEventProvider(), false);
         this.getActions().addAction(ActionFactory.createZoomAction ());
         this.getActions().addAction(ActionFactory.createPanAction());
         
@@ -83,8 +83,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         return selectAction;
     }
 
-    public WidgetAction getDeleAction() {
-        return deleAction;
+    public WidgetAction getDeleteAction() {
+        return deleteAction;
     }
 
     public BirdViewController getBirdViewController() {
