@@ -142,22 +142,53 @@ public class CausalDiagramEditor extends DiagramViewer{
     
     public void enable_deleteMode(boolean enable) {
         if (enable) {
-            this.variables.stream().filter((variable) -> (variable.getParentWidget() != null && !variable.getActions().getActions().contains(this.getDeleteAction()))).forEachOrdered((variable) -> {
-                variable.getActions().addAction(this.getDeleteAction());
+            this.variables.forEach((variable) -> {
+                if(variable.getParentWidget() != null) {
+                    if(!variable.getActions().getActions().contains(this.getDeleteAction())) {
+                        variable.getActions().addAction(this.getDeleteAction());
+                    }
+                } else {
+                    Thread t = new Thread(() -> {
+                        this.variables.remove(variable);
+                    });
+                }
             });
-            this.connections.stream().filter((connection) -> (!connection.getActions().getActions().contains(this.getDeleteAction()))).forEachOrdered((connection) -> {
-                connection.getActions().addAction(this.getDeleteAction());
-                connection.getActions ().removeAction(this.addRemoveControlPoint);
-                connection.getActions ().removeAction(this.freeMoveControlPoint);
+            this.connections.forEach((connection) -> {
+                if(connection.getParentWidget() != null) {
+                    if(!connection.getActions().getActions().contains(this.getDeleteAction())) {
+                        connection.getActions().addAction(this.getDeleteAction());
+                        connection.getActions ().removeAction(this.addRemoveControlPoint);
+                        connection.getActions ().removeAction(this.freeMoveControlPoint);
+                    }
+                } else {
+                    Thread t = new Thread(() -> {
+                        this.connections.remove(connection);
+                    });
+                }
             });
+
         } else {
-            this.variables.stream().filter((variable) -> (variable.getParentWidget() != null)).forEachOrdered((variable) -> {
-                variable.getActions().removeAction(this.getDeleteAction());
+            this.variables.forEach((variable) -> {
+                if(variable.getParentWidget() != null){
+                    variable.getActions().removeAction(this.getDeleteAction());
+                } else {
+                    Thread t = new Thread(() -> {
+                        this.variables.remove(variable);
+                    });
+                }
             });
-            this.connections.stream().filter((connection) -> (connection.getParentWidget() != null)).forEachOrdered((connection) -> {
-                connection.getActions().removeAction(this.getDeleteAction());
-                connection.getActions ().addAction(this.addRemoveControlPoint);
-                connection.getActions ().addAction(this.freeMoveControlPoint);
+            this.connections.forEach((connection) -> {
+                if(connection.getParentWidget() != null) {
+                    if(!connection.getActions().getActions().contains(this.getDeleteAction())) {
+                        connection.getActions().removeAction(this.getDeleteAction());
+                    connection.getActions ().addAction(this.addRemoveControlPoint);
+                    connection.getActions ().addAction(this.freeMoveControlPoint);
+                    }
+                } else {
+                    Thread t = new Thread(() -> {
+                        this.connections.remove(connection);
+                    });
+                }
             });
         }
     }
