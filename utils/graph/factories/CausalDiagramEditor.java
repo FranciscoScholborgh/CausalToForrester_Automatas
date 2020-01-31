@@ -142,6 +142,8 @@ public class CausalDiagramEditor extends DiagramViewer{
     
     public void enable_deleteMode(boolean enable) {
         if (enable) {
+            this.enable_insertVariable(false);
+            this.enable_relationVariables(false);
             this.variables.forEach((variable) -> {
                 if(variable.getParentWidget() != null) {
                     if(!variable.getActions().getActions().contains(this.getDeleteAction())) {
@@ -179,11 +181,9 @@ public class CausalDiagramEditor extends DiagramViewer{
             });
             this.connections.forEach((connection) -> {
                 if(connection.getParentWidget() != null) {
-                    if(!connection.getActions().getActions().contains(this.getDeleteAction())) {
-                        connection.getActions().removeAction(this.getDeleteAction());
+                    connection.getActions().removeAction(this.getDeleteAction());
                     connection.getActions ().addAction(this.addRemoveControlPoint);
                     connection.getActions ().addAction(this.freeMoveControlPoint);
-                    }
                 } else {
                     Thread t = new Thread(() -> {
                         this.connections.remove(connection);
