@@ -60,6 +60,8 @@ public class CausalDiagramEditor extends DiagramViewer{
         this.addChild(super.getMainLayer());
         this.addChild(super.getConnectionLayer());
         this.addChild(super.getInterractionLayer());
+        
+        this.getDeleteProvider().attachDiagramViewer(this);
     }
 
     public ArrayList<LabelWidget> getVariables() {
@@ -89,6 +91,28 @@ public class CausalDiagramEditor extends DiagramViewer{
     @Override
     public void createLabel(String node, Point location) {
         System.out.println("Not done");
+    }
+    
+    @Override
+    public void removeWidget(Widget widget) {
+        if(widget instanceof LabelWidget) {
+            this.variables.remove(widget);
+            LabelWidget nodeWidget = (LabelWidget) widget;
+            for (ConnectionWidget connection : this.connections) {
+                LabelWidget source = (LabelWidget) connection.getSourceAnchor().getRelatedWidget();
+                LabelWidget target = (LabelWidget) connection.getTargetAnchor().getRelatedWidget();
+                if(nodeWidget.equals(source) || nodeWidget.equals(target)) {
+                    this.connections.remove(connection);
+                    connection.removeFromParent();
+                }
+            }
+        } else if (widget instanceof ConnectionWidget) {
+            ConnectionWidget connection = (ConnectionWidget) widget;
+            this.connections.remove(widget);
+        } else {
+            System.out.println("Widget no soportado por este diagrama");
+        }
+        widget.removeFromParent();
     }
     
     protected void addRelation(ConnectionWidget connection) {
@@ -149,10 +173,6 @@ public class CausalDiagramEditor extends DiagramViewer{
                     if(!variable.getActions().getActions().contains(this.getDeleteAction())) {
                         variable.getActions().addAction(this.getDeleteAction());
                     }
-                } else {
-                    Thread t = new Thread(() -> {
-                        this.variables.remove(variable);
-                    });
                 }
             });
             this.connections.forEach((connection) -> {
@@ -162,10 +182,6 @@ public class CausalDiagramEditor extends DiagramViewer{
                         connection.getActions ().removeAction(this.addRemoveControlPoint);
                         connection.getActions ().removeAction(this.freeMoveControlPoint);
                     }
-                } else {
-                    Thread t = new Thread(() -> {
-                        this.connections.remove(connection);
-                    });
                 }
             });
 
@@ -173,10 +189,6 @@ public class CausalDiagramEditor extends DiagramViewer{
             this.variables.forEach((variable) -> {
                 if(variable.getParentWidget() != null){
                     variable.getActions().removeAction(this.getDeleteAction());
-                } else {
-                    Thread t = new Thread(() -> {
-                        this.variables.remove(variable);
-                    });
                 }
             });
             this.connections.forEach((connection) -> {
@@ -184,10 +196,6 @@ public class CausalDiagramEditor extends DiagramViewer{
                     connection.getActions().removeAction(this.getDeleteAction());
                     connection.getActions ().addAction(this.addRemoveControlPoint);
                     connection.getActions ().addAction(this.freeMoveControlPoint);
-                } else {
-                    Thread t = new Thread(() -> {
-                        this.connections.remove(connection);
-                    });
                 }
             });
         }

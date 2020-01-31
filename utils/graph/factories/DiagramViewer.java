@@ -7,12 +7,16 @@ package utils.graph.factories;
 
 import java.awt.Color;
 import java.awt.Point;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.BirdViewController;
 import org.netbeans.api.visual.widget.LayerWidget;
-import utils.graph.events.DeleteEventProvider;
+import org.netbeans.api.visual.widget.Widget;
 import utils.graph.events.SelectEventProvider;
 
 /**
@@ -37,6 +41,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
        
     private final BirdViewController birdViewController;
     
+    private final DeleteEventProvider deleteProvider;
+    
     private String relationType;
 
     public DiagramViewer() {
@@ -54,7 +60,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
         this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider (), false);
-        this.deleteAction = ActionFactory.createSelectAction(new DeleteEventProvider(), false);
+        this.deleteProvider = new DeleteEventProvider();
+        this.deleteAction = ActionFactory.createSelectAction(this.deleteProvider, false);
         this.getActions().addAction(ActionFactory.createZoomAction ());
         this.getActions().addAction(ActionFactory.createPanAction());
         
@@ -62,6 +69,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     }
     
     public abstract void createLabel (String label, Point location);
+    
+    public abstract void removeWidget (Widget widget);
     
     public LayerWidget getMainLayer() {
         return mainLayer;
@@ -87,6 +96,10 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         return deleteAction;
     }
 
+    protected DeleteEventProvider getDeleteProvider() {
+        return deleteProvider;
+    }
+
     public BirdViewController getBirdViewController() {
         return birdViewController;
     }
@@ -105,5 +118,37 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         } else {
             this.birdViewController.hide();
         }
+    }
+    
+    protected class DeleteEventProvider implements SelectProvider{
+        
+        private DiagramViewer diagramViewer;
+        
+        protected void attachDiagramViewer(DiagramViewer diagramViewer) {
+            this.diagramViewer = diagramViewer;
+        }
+
+        @Override
+        public boolean isAimingAllowed(Widget widget, Point point, boolean bln) {
+            return false;
+        }
+
+        @Override
+        public boolean isSelectionAllowed(Widget widget, Point point, boolean bln) {
+            return true;
+        }
+
+        @Override
+        public void select(Widget widget, Point point, boolean bln) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "¿Desea eliminar el elemento seleccionado?", ButtonType.YES, ButtonType.NO);
+                alert.setHeaderText(null);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES) {
+                    this.diagramViewer.removeWidget(widget);
+                }
+            });
+        }
+
     }
 }
