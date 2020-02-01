@@ -5,9 +5,11 @@
  */
 package utils.graph.factories;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
@@ -24,6 +26,7 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
+import utils.graph.dataRepresentation.DiagramData;
 import utils.graph.events.RenameEventProvider;
 
 /**
@@ -113,6 +116,52 @@ public class CausalDiagramEditor extends DiagramViewer{
             System.out.println("Widget no soportado por este diagrama");
         }
         widget.removeFromParent();
+    }
+    
+    @Override
+    public DiagramData getDiagramData() {
+        DiagramData data = new DiagramData(this.variables.size());
+        int counter = 0;
+        for (LabelWidget label : variables) {
+            String variable = label.getLabel();
+            data.insert_node(counter++, variable);
+        }
+        for (ConnectionWidget connection : this.connections) {
+            LabelWidget sourceLabel = (LabelWidget) connection.getSourceAnchor().getRelatedWidget();
+            LabelWidget targetLabel = (LabelWidget) connection.getTargetAnchor().getRelatedWidget();
+            
+            String sourceVar = sourceLabel.getLabel();
+            String targetVar = targetLabel.getLabel();
+            
+            int row = -1; 
+            int column = -1;
+            
+            for (int index = 0; index < counter; index++) {
+                String value = data.getNodes().get(index);
+                if(value.equals(sourceVar)) {
+                    row = index;
+                    if(row != -1 && column != -1)   
+                        break;
+                } else if (value.equals(targetVar)) {
+                    column = index;
+                    if(row != -1 && column != -1)   
+                        break;
+                }
+            }
+            
+            if(row != -1 && column != -1) {
+                LabelWidget signoWodget = (LabelWidget) connection.getChildren().get(0);
+                String signo = signoWodget.getLabel();
+                int value;
+                if(signo.contains("+")){
+                    value = 1;
+                } else {
+                    value = -1;
+                }
+                data.insert_matrixRelation(row, column, value);
+            }
+        }
+        return data;
     }
     
     protected void addRelation(ConnectionWidget connection) {
@@ -315,7 +364,7 @@ public class CausalDiagramEditor extends DiagramViewer{
             connection.getActions ().addAction (this.scene.getFreeMoveControlPoint());
             //connection.getActions().addAction(this.scene.getDeleteAction());
             LabelWidget signo = new LabelWidget (this.scene.getScene(), this.scene.getRelationType());
-            signo.setOpaque (true);
+            signo.setOpaque (false);
             connection.addChild (signo);
             connection.setConstraint (signo, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
             getConnectionLayer().addChild (connection);

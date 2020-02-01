@@ -17,6 +17,7 @@ import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.BirdViewController;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import utils.graph.dataRepresentation.DiagramData;
 import utils.graph.events.SelectEventProvider;
 
 /**
@@ -71,6 +72,8 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     public abstract void createLabel (String label, Point location);
     
     public abstract void removeWidget (Widget widget);
+    
+    public abstract DiagramData getDiagramData ();
     
     public LayerWidget getMainLayer() {
         return mainLayer;
