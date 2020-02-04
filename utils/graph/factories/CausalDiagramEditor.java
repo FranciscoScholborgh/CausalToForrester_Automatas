@@ -5,14 +5,10 @@
  */
 package utils.graph.factories;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import javafx.application.Platform;
-import javafx.scene.control.TextInputDialog;
+import javax.swing.JOptionPane;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -105,7 +101,9 @@ public class CausalDiagramEditor extends DiagramViewer{
                 LabelWidget source = (LabelWidget) connection.getSourceAnchor().getRelatedWidget();
                 LabelWidget target = (LabelWidget) connection.getTargetAnchor().getRelatedWidget();
                 if(nodeWidget.equals(source) || nodeWidget.equals(target)) {
-                    this.connections.remove(connection);
+                    Thread t = new Thread( () -> {
+                        this.connections.remove(connection);
+                    });
                     connection.removeFromParent();
                 }
             }
@@ -293,19 +291,17 @@ public class CausalDiagramEditor extends DiagramViewer{
         public WidgetAction.State mousePressed (Widget widget, WidgetAction.WidgetMouseEvent event) {
             if (event.getClickCount () == 1)
                 if (event.getButton () == MouseEvent.BUTTON1 || event.getButton () == MouseEvent.BUTTON2) {
-                    Platform.runLater(() -> {
-                        TextInputDialog dialog = new TextInputDialog("");
-                        dialog.setHeaderText(null);
-                        dialog.setTitle("Nombre variable");
-
-                        Optional<String> result = dialog.showAndWait();
-                        String entered = "none.";
-
-                        if (result.isPresent()) {
-                            addNode (result.get()).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                    String variable = JOptionPane.showInputDialog(null, "Inserte titulo de la variable", 
+                            "Variable", JOptionPane.INFORMATION_MESSAGE);
+                        try {
+                            boolean empty = variable.isEmpty();
+                            if(!empty){
+                                addNode (variable).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                            } 
+                        } catch (NullPointerException npe) {
+                            return WidgetAction.State.REJECTED;
                         }
-                    });
-                    return WidgetAction.State.CONSUMED;
+                        return WidgetAction.State.CONSUMED;
                 }
             return WidgetAction.State.REJECTED;
         }

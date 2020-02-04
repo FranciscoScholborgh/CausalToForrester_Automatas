@@ -5,32 +5,13 @@
  */
 package controlador;
 
-import com.jfoenix.controls.JFXButton;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.embed.swing.SwingNode;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Menu;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import utils.graph.DiagramCreator;
 import utils.graph.factories.CausalDiagramEditor;
@@ -39,80 +20,90 @@ import utils.graph.factories.CausalDiagramEditor;
  *
  * @author frank
  */
-public class MainMenuController implements Initializable {
+public class MainMenuController {
+             
+    private final JButton edit_btn;
     
-    
-    @FXML
-    private AnchorPane pane_stage;
-            
-    @FXML
-    private Menu design_btn;
-    
-    @FXML
-    private Menu import_btn;
+    private final JButton delete_btn;
 
-    @FXML
-    private JFXButton edit_btn;
-    
-    @FXML
-    private JFXButton birdview_btn;
-    
-    @FXML
-    private JFXButton delete_btn;
+    private final JButton reset_btn;
 
-    @FXML
-    private JFXButton reset_btn;
+    private final JToggleButton varopt_btn;
 
-    @FXML
-    private JFXButton convert_btn;
-    
-    @FXML
-    private JFXButton varopt_btn;
+    private final JToggleButton addopt_btn;
 
-    @FXML
-    private JFXButton addopt_btn;
-
-    @FXML
-    private JFXButton minusopt_btn;
+    private final JToggleButton minusopt_btn;
   
-    @FXML
-    private AnchorPane editor_viewer;
+    private final JScrollPane editor_viewer;
     
     private CausalDiagramEditor causalEditor;
     
-    private Map<String, Boolean> active_utils;
+    private final Map<String, Boolean> active_utils;
+
+    public MainMenuController(JButton edit_btn, JButton delete_btn, JButton reset_btn, JToggleButton varopt_btn, JToggleButton addopt_btn, JToggleButton minusopt_btn, JScrollPane editor_viewer) {
+        this.edit_btn = edit_btn;
+        this.delete_btn = delete_btn;
+        this.reset_btn = reset_btn;
+        this.varopt_btn = varopt_btn;
+        this.addopt_btn = addopt_btn;
+        this.minusopt_btn = minusopt_btn;
+        this.editor_viewer = editor_viewer;
+        
+        this.active_utils = new HashMap<>();
+        this.active_utils.put("BIRD_VIEW", Boolean.FALSE);
+        this.active_utils.put("ZOOM", Boolean.FALSE);
+        this.create_newDiagramEditor();
+    }
     
     private void create_newDiagramEditor() {
         this.causalEditor = DiagramCreator.create_CausaDiagramEditor();
         SwingUtilities.invokeLater(() -> {
-            SwingNode swingNode = new SwingNode();
             JComponent sceneView = this.causalEditor.createView();
-            JScrollPane panel = new JScrollPane (sceneView);
-            panel.getHorizontalScrollBar().setUnitIncrement (32);
-            panel.getHorizontalScrollBar().setBlockIncrement (256);
-            panel.getVerticalScrollBar().setUnitIncrement (32);
-            panel.getVerticalScrollBar().setBlockIncrement (256);
-            swingNode.setContent(panel);
-            Platform.runLater(() -> {
-                editor_viewer.getChildren().add(swingNode);
-                AnchorPane.setBottomAnchor(swingNode, 0.0);
-                AnchorPane.setLeftAnchor(swingNode, 0.0);
-                AnchorPane.setRightAnchor(swingNode, 0.0);
-                AnchorPane.setTopAnchor(swingNode, 0.0);
-            });
+            int length = this.editor_viewer.getViewport().getComponents().length;
+            if(length != 0) {
+                this.editor_viewer.getViewport().removeAll();
+            }
+            this.editor_viewer.getViewport().add(sceneView);
+            this.editor_viewer.getHorizontalScrollBar().setUnitIncrement (32);
+            this.editor_viewer.getHorizontalScrollBar().setBlockIncrement (256);
+            this.editor_viewer.getVerticalScrollBar().setUnitIncrement (32);
+            this.editor_viewer.getVerticalScrollBar().setBlockIncrement (256);
         });
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {    
-        this.create_newDiagramEditor();
-        this.active_utils = new HashMap<>();
-        this.active_utils.put("BIRD_VIEW", Boolean.FALSE);
-        this.active_utils.put("ZOOM", Boolean.FALSE);
+    private void unlocked_elements() {
+        this.varopt_btn.setEnabled(true);
+        this.addopt_btn.setEnabled(true);
+        this.minusopt_btn.setEnabled(true);
+        this.edit_btn.setEnabled(true);
+        this.delete_btn.setEnabled(true);
     }
-   
-    @FXML
-    void birdView_diagram(ActionEvent event) {
+    
+    public void create_variable() {
+        this.unlocked_elements();
+        this.varopt_btn.setEnabled(false);
+        this.causalEditor.activate_insertVariable();
+    }
+    
+    public void add_linktovariable() {
+        this.unlocked_elements();
+        this.addopt_btn.setEnabled(false);  
+        this.causalEditor.activate_relationVariables("+");
+    }
+    
+    public void minus_linktovariable() {
+        this.unlocked_elements();
+        this.minusopt_btn.setEnabled(false);
+        this.causalEditor.activate_relationVariables("-");
+    }
+    
+    public void edit_diagram() {
+        this.unlocked_elements();
+        this.edit_btn.setEnabled(false);
+        this.causalEditor.deactivate_all();
+    }
+    
+    public void birdView_diagram() {
         if(this.active_utils.get("BIRD_VIEW")) {
             this.causalEditor.enable_birdview(false);
             this.active_utils.replace("BIRD_VIEW", Boolean.FALSE);
@@ -122,89 +113,22 @@ public class MainMenuController implements Initializable {
         }
     }
     
-    @FXML
-    void casual_toForrester(ActionEvent event) {
-        try {
-            System.out.println("Convertir diagrama causal");
-            Parent root = FXMLLoader.load(getClass().getResource("/vista/ForresterViewer.fxml"));
-           
-            Scene scene = new Scene(root);
-            
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();      
-        } catch (IOException ex) {
-            Logger.getLogger(MainMenuController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void unlocked_elements() {
-        this.varopt_btn.setDisable(false);
-        this.addopt_btn.setDisable(false);
-        this.minusopt_btn.setDisable(false);
-        this.edit_btn.setDisable(false);
-        this.delete_btn.setDisable(false);
-    }
-    
-    @FXML
-    void create_variable(ActionEvent event) {
+    public void delete_nodeFromDiagram() {
         this.unlocked_elements();
-        this.varopt_btn.setDisable(true);
-        this.causalEditor.activate_insertVariable();
+        this.delete_btn.setEnabled(false);
+        this.causalEditor.enable_deleteMode(true);
     }
     
-    @FXML
-    void add_linktovariable(ActionEvent event) {
-        this.unlocked_elements();
-        this.addopt_btn.setDisable(true);  
-        this.causalEditor.activate_relationVariables("+");
-    }
-    
-    @FXML
-    void minus_linktovariable(ActionEvent event) {
-        this.unlocked_elements();
-        this.minusopt_btn.setDisable(true);
-        this.causalEditor.activate_relationVariables("-");
-    }
-    
-    @FXML
-    void delete_diagram(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION, "¿Desea borrar los cambios realizados en el diagrama?", ButtonType.YES, ButtonType.NO); 
-        alert.setHeaderText(null);
-        alert.showAndWait();
-
-        if (alert.getResult() == ButtonType.YES) {
-            this.editor_viewer.getChildren().clear();
+    public void reset_diagram() {
+        int answer = JOptionPane.showConfirmDialog(null, "¿Desea borrar los cambios realizados en el diagrama?", 
+                    "Eliminar elemento", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (answer == JOptionPane.YES_OPTION) {
             this.create_newDiagramEditor();
             this.unlocked_elements();
         }
     }
     
-    @FXML
-    void edit_diagram(ActionEvent event) {
-        this.unlocked_elements();
-        this.edit_btn.setDisable(true);
-        this.causalEditor.deactivate_all();
+    public void casual_toForrester() {
+        System.out.println("Unsupported");
     }
-    
-    @FXML
-    void delete_nodeFromDiagram(ActionEvent event) {
-        this.unlocked_elements();
-        this.delete_btn.setDisable(true);
-        this.causalEditor.enable_deleteMode(true);
-    }
-
-    @FXML
-    void import_diagram(ActionEvent event) {
-        System.out.println("Habemus pedum?");
-        Stage window = (Stage) this.pane_stage.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Importar diagrama causal");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("CSL", "*.csl")
-            );
-        fileChooser.showOpenDialog(window);
-    }
-    
 }

@@ -7,9 +7,7 @@ package utils.graph.factories;
 
 import java.awt.Color;
 import java.awt.Point;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javax.swing.JOptionPane;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -143,14 +141,12 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
 
         @Override
         public void select(Widget widget, Point point, boolean bln) {
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "¿Desea eliminar el elemento seleccionado?", ButtonType.YES, ButtonType.NO);
-                alert.setHeaderText(null);
-                alert.showAndWait();
-                if (alert.getResult() == ButtonType.YES) {
-                    this.diagramViewer.removeWidget(widget);
-                }
-            });
+            int answer = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el elemento seleccionado?", 
+                    "Eliminar elemento", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (answer == JOptionPane.YES_OPTION) {
+                this.diagramViewer.removeWidget(widget);
+            }
+
         }
 
     }
