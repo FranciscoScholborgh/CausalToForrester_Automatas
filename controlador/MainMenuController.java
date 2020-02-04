@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import utils.graph.DiagramCreator;
 import utils.graph.factories.CausalDiagramEditor;
+import vista.VariablesView;
 
 /**
  *
@@ -39,6 +41,8 @@ public class MainMenuController {
     private CausalDiagramEditor causalEditor;
     
     private final Map<String, Boolean> active_utils;
+    
+    private final VariablesViewController variablesViewer;
 
     public MainMenuController(JButton edit_btn, JButton delete_btn, JButton reset_btn, JToggleButton varopt_btn, JToggleButton addopt_btn, JToggleButton minusopt_btn, JScrollPane editor_viewer) {
         this.edit_btn = edit_btn;
@@ -52,6 +56,10 @@ public class MainMenuController {
         this.active_utils = new HashMap<>();
         this.active_utils.put("BIRD_VIEW", Boolean.FALSE);
         this.active_utils.put("ZOOM", Boolean.FALSE);
+        
+        this.variablesViewer = new VariablesView().getController();
+        this.variablesViewer.setParent(this);
+                
         this.create_newDiagramEditor();
     }
     
@@ -129,6 +137,19 @@ public class MainMenuController {
     }
     
     public void casual_toForrester() {
-        System.out.println("Unsupported");
+        //Recibir la informacion para el procesamiento
+        ArrayList<String> variables = new ArrayList<>();
+        variables.add("Mortal Kombat X");
+        variables.add("Mortal Kombat 11");
+        this.variablesViewer.loadViariables(variables);
+        this.variablesViewer.show();
+    }
+    
+    protected void convertion_userPreset(ArrayList<String> preset) {
+        this.variablesViewer.hide();
+        preset.forEach((string) -> {
+            System.out.println("Preset: " + string);
+        });
+        //Se termina el proceso de conversion con el envio de los datos restantes
     }
 }

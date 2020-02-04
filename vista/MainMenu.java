@@ -276,7 +276,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_reset_btnActionPerformed
 
     private void convert_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convert_btnActionPerformed
-        // TODO add your handling code here:
+        this.controller.casual_toForrester();
     }//GEN-LAST:event_convert_btnActionPerformed
 
     private void varopt_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_varopt_btnActionPerformed
