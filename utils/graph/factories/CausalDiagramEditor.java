@@ -86,7 +86,11 @@ public class CausalDiagramEditor extends DiagramViewer{
     protected WidgetAction getFreeMoveControlPoint() {
         return freeMoveControlPoint;
     }
-    
+
+    protected WidgetAction getConnectAction() {
+        return connectAction;
+    }
+
     @Override
     public void createLabel(String node, Point location) {
         System.out.println("Not done");
@@ -350,8 +354,8 @@ public class CausalDiagramEditor extends DiagramViewer{
             //setEdgeSource (edge, source);
             //setEdgeTarget (edge, target);
             ConnectionWidget connection = new ConnectionWidget (this.scene.getScene());
-            connection.setSourceAnchor (AnchorFactory.createDirectionalAnchor (sourceWidget, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
-            connection.setTargetAnchor (AnchorFactory.createDirectionalAnchor (targetWidget, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
+            connection.setSourceAnchor (AnchorFactory.createRectangularAnchor (sourceWidget));
+            connection.setTargetAnchor (AnchorFactory.createRectangularAnchor (targetWidget));
             connection.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
             connection.setPaintControlPoints (true);
             connection.setControlPointShape (PointShape.SQUARE_FILLED_BIG);
