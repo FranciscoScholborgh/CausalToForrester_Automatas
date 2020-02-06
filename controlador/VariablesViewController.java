@@ -6,6 +6,7 @@
 package controlador;
 
 import java.util.ArrayList;
+import java.util.Map;
 import vista.VariablesView;
 
 /**
@@ -17,6 +18,8 @@ public class VariablesViewController {
     private MainMenuController parent;
     
     private final VariablesView view;
+    
+    private Map<Integer, String> nodes;
 
     public VariablesViewController(VariablesView view) {
         this.view = view;
@@ -32,13 +35,14 @@ public class VariablesViewController {
     
     public void sendInfo_toParents() {
         ArrayList<String> preset = this.view.getCheckedItems();
-        this.parent.convertion_userPreset(preset);
+        this.parent.convertion_userPreset(preset, this.nodes);
     }
     
-    public void loadViariables (ArrayList<String> variables) {
+    public void loadViariables (ArrayList<String> variables, Map<Integer, String> nodes) {
         try{
             if(!variables.isEmpty()) {
                 this.view.setItems_VariablesHolder(variables);
+                this.nodes = nodes;
             }
         } catch (NullPointerException npe) {
             System.out.println("Null");

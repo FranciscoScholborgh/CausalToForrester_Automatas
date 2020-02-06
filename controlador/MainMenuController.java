@@ -14,8 +14,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import modelo.Conversion;
+import modelo.ValidacionCausal;
 import utils.graph.DiagramCreator;
+import utils.graph.dataRepresentation.DiagramData;
 import utils.graph.factories.CausalDiagramEditor;
+import vista.ForresterViewer;
 import vista.VariablesView;
 
 /**
@@ -43,6 +47,8 @@ public class MainMenuController {
     private final Map<String, Boolean> active_utils;
     
     private final VariablesViewController variablesViewer;
+    
+    private Conversion causalConvertion;
 
     public MainMenuController(JButton edit_btn, JButton delete_btn, JButton reset_btn, JToggleButton varopt_btn, JToggleButton addopt_btn, JToggleButton minusopt_btn, JScrollPane editor_viewer) {
         this.edit_btn = edit_btn;
@@ -137,19 +143,72 @@ public class MainMenuController {
     }
     
     public void casual_toForrester() {
+        DiagramData data =  this.causalEditor.getDiagramData();
+        Map<Integer, String> nodes = data.getNodes();
+        int[][] matrix = data.getMatrix();
+        ValidacionCausal casualValidator = new ValidacionCausal(matrix.length);
+        casualValidator.rellenar(matrix);
+        
+        boolean escausal = casualValidator.esCausal();
+        if (escausal && nodes.size() > 0) {
+            causalConvertion = new Conversion(matrix.length, matrix);
+            causalConvertion.identificarParams();
+            causalConvertion.identificarConexion("I");
+            causalConvertion.identificarCiclosMinimos();
+            causalConvertion.identificarConexion("F");
+            causalConvertion.rellenarIFaltantes();
+            causalConvertion.establecerRX();
+            
+            if(causalConvertion.estaCompleta()){
+                //borrar en modo produccion
+                causalConvertion.mostrarVariablesForrester();
+                causalConvertion.calcularEcuaciones();
+                this.show_ForresterDiagram(nodes);
+                
+            } else {
+                ArrayList<String> variables = new ArrayList<>();
+                String[][] tipos = causalConvertion.matrizTipos;    
+                for (int i = 0; i < matrix.length; i++) {
+                    if(tipos[i][i].equals(" ")) {
+                        String var = nodes.get(i);
+                        variables.add(var);
+                    }
+                }
+                this.variablesViewer.loadViariables(variables, nodes);
+                this.variablesViewer.show();
+            }
+        } else {
+            System.out.println("Mensaje de pendejo tu usuario xD");
+        }
+        
+        /*
         //Recibir la informacion para el procesamiento
         ArrayList<String> variables = new ArrayList<>();
         variables.add("Mortal Kombat X");
         variables.add("Mortal Kombat 11");
         this.variablesViewer.loadViariables(variables);
-        this.variablesViewer.show();
+        this.variablesViewer.show();*/
     }
     
-    protected void convertion_userPreset(ArrayList<String> preset) {
+    protected void convertion_userPreset(ArrayList<String> preset, Map<Integer, String> nodes) {
         this.variablesViewer.hide();
-        preset.forEach((string) -> {
-            System.out.println("Preset: " + string);
+        ArrayList<Integer> index = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>(nodes.values());
+        System.out.println("map" + nodes.get(0));
+        System.out.println("Array" + values.get(0));
+        preset.forEach((var) -> {
+            index.add(values.indexOf(var));
         });
-        //Se termina el proceso de conversion con el envio de los datos restantes
+        causalConvertion.procesarInformacion(index);
+        causalConvertion.rellenarIFaltantes();
+        causalConvertion.establecerRX();
+        causalConvertion.calcularEcuaciones();
+        
+        this.show_ForresterDiagram(nodes);
+
+    }
+    
+    private void show_ForresterDiagram(Map<Integer, String> nodes) {
+        new ForresterViewer().getController().showDiagram(causalConvertion.matrizTipos, nodes);
     }
 }
