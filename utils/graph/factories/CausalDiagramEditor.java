@@ -48,7 +48,7 @@ public class CausalDiagramEditor extends DiagramViewer{
         this.variables = new ArrayList<>();
         this.connections = new ArrayList<>();
         
-        this.createAction = new SceneCreateAction ();
+        this.createAction = new SceneCreateAction (this);
         this.connectAction = ActionFactory.createConnectAction (super.getInterractionLayer(), new SceneConnectProvider (this));
         this.reconnectAction = ActionFactory.createReconnectAction (new SceneReconnectProvider ());
         this.renameAction = ActionFactory.createInplaceEditorAction (new RenameEventProvider ());
@@ -289,8 +289,26 @@ public class CausalDiagramEditor extends DiagramViewer{
         Widget w = targetNode != null ? findWidget (targetNode) : null;
         ((ConnectionWidget) findWidget (edge)).setTargetAnchor (AnchorFactory.createRectangularAnchor (w));
     }
+    
+    private boolean isVariable(String variable) {
+        boolean exist = false;
+        for (LabelWidget label : variables) {
+            String labelStr = label.getLabel();
+            if(variable.equals(labelStr)) {
+                exist = true;
+                break;
+            }
+        }
+        return exist;
+    }
 
     private class SceneCreateAction extends WidgetAction.Adapter {
+        
+        private final CausalDiagramEditor scene;
+
+        public SceneCreateAction(CausalDiagramEditor scene) {
+            this.scene = scene;
+        }
 
         @Override
         public WidgetAction.State mousePressed (Widget widget, WidgetAction.WidgetMouseEvent event) {
@@ -301,7 +319,11 @@ public class CausalDiagramEditor extends DiagramViewer{
                         try {
                             boolean empty = variable.isEmpty();
                             if(!empty){
-                                addNode (variable).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                                if(!this.scene.isVariable(variable)){
+                                    addNode (variable).setPreferredLocation (widget.convertLocalToScene (event.getPoint ()));
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "La variable " + variable + " ya existe", "Variable " + variable , 0);
+                                }
                             } 
                         } catch (NullPointerException npe) {
                             return WidgetAction.State.REJECTED;
