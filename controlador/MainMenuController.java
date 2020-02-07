@@ -178,24 +178,15 @@ public class MainMenuController {
                 this.variablesViewer.show();
             }
         } else {
+            this.variablesViewer.hide();
             System.out.println("Mensaje de pendejo tu usuario xD");
         }
-        
-        /*
-        //Recibir la informacion para el procesamiento
-        ArrayList<String> variables = new ArrayList<>();
-        variables.add("Mortal Kombat X");
-        variables.add("Mortal Kombat 11");
-        this.variablesViewer.loadViariables(variables);
-        this.variablesViewer.show();*/
     }
     
     protected void convertion_userPreset(ArrayList<String> preset, Map<Integer, String> nodes) {
         this.variablesViewer.hide();
         ArrayList<Integer> index = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>(nodes.values());
-        System.out.println("map" + nodes.get(0));
-        System.out.println("Array" + values.get(0));
         preset.forEach((var) -> {
             index.add(values.indexOf(var));
         });
@@ -209,6 +200,11 @@ public class MainMenuController {
     }
     
     private void show_ForresterDiagram(Map<Integer, String> nodes) {
-        new ForresterViewer().getController().showDiagram(causalConvertion.matrizTipos, nodes);
+        ForresterViewerController forresterViewer = new ForresterViewer().getController();
+        forresterViewer.showDiagram(causalConvertion.matrizTipos, nodes);
+        forresterViewer.showEcuations(nodes, causalConvertion.ecuaciones);
+        for (String ecuacione : causalConvertion.ecuaciones) {
+            System.out.println(ecuacione);
+        }
     }
 }

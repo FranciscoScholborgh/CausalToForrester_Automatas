@@ -351,7 +351,7 @@ public class Conversion {
                     ecuacion += " - ("+i+")";
                 }
             }
-            ecuacion = indice+"{t-1}"+ecuacion;
+            ecuacion = "("+indice+")"+"{t-1}"+ecuacion;
         }
         else if(tipo.equals("R")){
             boolean resta = false;
@@ -365,34 +365,34 @@ public class Conversion {
                 if(resta == false){
                     if(matriz[i][indice] == 1) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "*" + i + "";
+                            numerador += "*(" + i + ")";
                         }
                     }
                 }
                 else{ //resta == true
                     if(matriz[i][indice] == 1) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "+" + i + "";
+                            numerador += "+(" + i + ")";
                         }
                     }
                     else if(matriz[i][indice] == -1 && matrizTipos[i][i].equals("X")) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "-" + i + "";
+                            numerador += "-(" + i + ")";
                         }
                     }
                 }
                 
                 if (matriz[i][indice] == -1 && matrizTipos[i][i].equals("P")) {
                     if (denominador.equals("")) {
-                        denominador += "" + i + "";
+                        denominador += "(" + i + ")";
                     } else {
-                        denominador += "*" + i + "";
+                        denominador += "*(" + i + ")";
                     }
                 }
                 
@@ -421,34 +421,34 @@ public class Conversion {
                 if(resta == false){
                     if (matriz[i][indice] == 1) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "*" + i + "";
+                            numerador += "*(" + i + ")";
                         }
                     }
                 }
                 else{
                     if(matriz[i][indice] == 1) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "+" + i + "";
+                            numerador += "+(" + i + ")";
                         }
                     }
                     else if(matriz[i][indice] == -1 && matrizTipos[i][i].equals("V")) {
                         if (numerador.equals("")) {
-                            numerador += "" + i + "";
+                            numerador += "(" + i + ")";
                         } else {
-                            numerador += "-" + i + "";
+                            numerador += "-(" + i + ")";
                         }
                     }
                 }
                 
                 if (matriz[i][indice] == -1 && matrizTipos[i][i].equals("P")) {
                     if (denominador.equals("")) {
-                        denominador += "" + i + "";
+                        denominador += "(" + i + ")";
                     } else {
-                        denominador += "*" + i + "";
+                        denominador += "*(" + i + ")";
                     }
                 }
                 

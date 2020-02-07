@@ -39,6 +39,10 @@ public class ForresterViewerController {
         this.viewer = viewer;
     }
     
+    public void showEcuations(Map<Integer, String> variables, String[] ecuations) {
+        this.viewer.write_ecuations(variables, ecuations);
+    }
+    
     public void showDiagram(String [][] matrix, Map<Integer, String> variables) {
 
         ForresterFactory factory = new ForresterFactory();

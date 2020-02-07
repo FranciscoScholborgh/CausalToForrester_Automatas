@@ -6,6 +6,7 @@
 package vista;
 
 import controlador.ForresterViewerController;
+import java.util.Map;
 import javax.swing.JScrollPane;
 
 /**
@@ -34,52 +35,33 @@ public class ForresterViewer extends javax.swing.JFrame {
     private void initComponents() {
 
         viewer = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        formulas = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        formulas.setEditable(false);
+        formulas.setColumns(20);
+        formulas.setRows(5);
+        jScrollPane1.setViewportView(formulas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(viewer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(viewer, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(viewer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ForresterViewer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new ForresterViewer().setVisible(true);
-        });
-    }
 
     public JScrollPane getViewer() {
         return viewer;
@@ -88,9 +70,27 @@ public class ForresterViewer extends javax.swing.JFrame {
     public ForresterViewerController getController() {
         return controller;
     }
-
     
+    public void write_ecuations(Map<Integer, String> variables, String[] ecuations) {
+        this.formulas.setText("");
+        String toWrite = "ECUACIONES \n";
+        for (int index = 0; index < ecuations.length; index++) {
+            toWrite = toWrite + variables.get(index) + "\n";
+            String ecuation = ecuations[index];
+            for (int varIndex = 0; varIndex < ecuations.length; varIndex++) {
+                String strIndex = "("+ String.valueOf(varIndex) + ")";
+                if(ecuation.contains(strIndex)) {
+                    ecuation = ecuation.replace(strIndex, variables.get(varIndex)+" ");
+                }
+            }
+            toWrite = toWrite + "ecuación: " + ecuation + "\n";
+        }
+        this.formulas.setText(toWrite);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea formulas;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane viewer;
     // End of variables declaration//GEN-END:variables
 }
