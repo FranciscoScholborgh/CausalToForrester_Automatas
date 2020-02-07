@@ -255,11 +255,9 @@ public class CausalDiagramEditor extends DiagramViewer{
     @Override
     protected Widget attachNodeWidget (String node) {
         LabelWidget label = new LabelWidget (this, node);
-        //label.setBorder (BorderFactory.createLineBorder (4));
         label.getActions ().addAction (createObjectHoverAction ());
         label.getActions ().addAction (this.renameAction);
         label.getActions ().addAction (super.getMoveAction());
-        //label.getActions ().addAction (this.connectAction);
         super.getMainLayer().addChild (label);
         this.variables.add(label);
         return label;
@@ -273,7 +271,6 @@ public class CausalDiagramEditor extends DiagramViewer{
         connection.getActions ().addAction (createObjectHoverAction ());
         connection.getActions ().addAction (createSelectAction ());
         connection.getActions ().addAction (reconnectAction);
-        //connection.setRouter(RouterFactory.createOrthogonalSearchRouter (super.getMainLayer(), super.getConnectionLayer()));
         super.getConnectionLayer().addChild (connection);
         return connection;
     }
@@ -372,25 +369,18 @@ public class CausalDiagramEditor extends DiagramViewer{
 
         @Override
         public void createConnection (Widget sourceWidget, Widget targetWidget) {
-            //String edge = "edge" + edgeCounter ++;
-            //addEdge (edge);
-            //setEdgeSource (edge, source);
-            //setEdgeTarget (edge, target);
             ConnectionWidget connection = new ConnectionWidget (this.scene.getScene());
             connection.setSourceAnchor (AnchorFactory.createRectangularAnchor (sourceWidget));
             connection.setTargetAnchor (AnchorFactory.createRectangularAnchor (targetWidget));
             connection.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
             connection.setPaintControlPoints (true);
             connection.setControlPointShape (PointShape.SQUARE_FILLED_BIG);
-            //connection.setRouter (RouterFactory.createOrthogonalSearchRouter (getMainLayer()));
             connection.getActions ().addAction (this.scene.getAddRemoveControlPoint());
             connection.getActions ().addAction (this.scene.getFreeMoveControlPoint());
-            //connection.getActions().addAction(this.scene.getDeleteAction());
             LabelWidget signo = new LabelWidget (this.scene.getScene(), this.scene.getRelationType());
             signo.setOpaque (false);
             connection.addChild (signo);
             connection.setConstraint (signo, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
-            //connection.setRouter(RouterFactory.createOrthogonalSearchRouter (scene.getMainLayer(), scene.getConnectionLayer()));
             getConnectionLayer().addChild (connection);
             this.scene.addRelation(connection);
         }

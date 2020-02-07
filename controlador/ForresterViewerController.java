@@ -46,7 +46,6 @@ public class ForresterViewerController {
     public void showDiagram(String [][] matrix, Map<Integer, String> variables) {
 
         ForresterFactory factory = new ForresterFactory();
-        //Scene scene = new Scene ();
         
         LoopEdgeTest scene = new LoopEdgeTest ();
 
@@ -86,13 +85,6 @@ public class ForresterViewerController {
                 elements.put(i, widget);
                 anchors.put(i, new VMDNodeAnchor (widget));
                 mainLayer.addChild (widget);
-            } else if(type.contains("R")) {/*  //crea elementos
-                Widget iconNode = new Widget (scene);
-                iconNode.addChild (new ImageWidget (scene, Utilities.loadImage ("/icon/reloj-de-arena.png")));
-                iconNode.addChild (new LabelWidget (scene, elementos.get(i)));
-                elements.put(i, iconNode);
-                mainLayer.addChild (iconNode);*/
-
             } else if (type.contains("X")) {
                 LabelWidget widget = factory.create_levelVar(scene, elementos.get(i), new Point(pos, pos));
                 widget.getActions().addAction(moveAction);
@@ -117,7 +109,6 @@ public class ForresterViewerController {
                 }
                 int inSize = inComing.size();
                 int outSize = outComing.size();
-                System.out.println("in: " + inSize + " out: " + outSize );
                 if(!(inSize > 1 ||  outSize> 1)) {
                     Point coordinates;
                     Widget source;
@@ -176,13 +167,11 @@ public class ForresterViewerController {
                             connection = new ConnectionWidget (scene);
                             connection.setRouter (router);
                             connection.setTargetAnchorShape (AnchorShape.TRIANGLE_FILLED);
-                            //connection.setRouter(RouterFactory.createDirectRouter());
                             connection.setSourceAnchor(anchors.get (row));
                             connection.setTargetAnchor(anchors.get (column));
                             
                         } else {
                             connection = factory.regular_conecction(scene, sourceWidget, targetWidget);
-                            //connection.setRouter(RouterFactory.createOrthogonalSearchRouter (mainLayer, connectionLayer));
                         }
                         connectionLayer.addChild(connection);
                     } 

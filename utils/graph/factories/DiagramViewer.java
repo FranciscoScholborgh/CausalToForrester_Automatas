@@ -31,8 +31,6 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
     private final LayerWidget connectionLayer;
     
     private final WidgetAction moveAction;
-    
-    //private WidgetAction resizeAction;
         
     private final WidgetAction selectAction;
     
@@ -56,7 +54,6 @@ public abstract class DiagramViewer extends GraphScene.StringGraph{
         this.connectionLayer = new LayerWidget (this);
         this.addChild (this.connectionLayer);
         
-        //this.resizeAction = ActionFactory.createAlignWithResizeAction (mainLayer, interractionLayer, null);
         this.moveAction = ActionFactory.createAlignWithMoveAction (mainLayer, interractionLayer, null);
         this.selectAction = ActionFactory.createSelectAction (new SelectEventProvider (), false);
         this.deleteProvider = new DeleteEventProvider();

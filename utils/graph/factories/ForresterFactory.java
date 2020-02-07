@@ -38,7 +38,6 @@ public class ForresterFactory {
             LabelWidget widget = new LabelWidget (scene, variable);
             int x = (int) coordinates.getX();
             int y = (int) coordinates.getY();
-            //this.point.replace("x", y+140);
             widget.setPreferredLocation(new Point (x, y));
             return widget;
         }
@@ -48,7 +47,6 @@ public class ForresterFactory {
             widget.setBorder (BorderFactory.createLineBorder (4));
             int x = (int) coordinates.getX();
             int y = (int) coordinates.getY();
-            //this.point.replace("x", y+140);
             widget.setPreferredLocation(new Point (x, y));
             return widget;
         }
@@ -82,11 +80,9 @@ public class ForresterFactory {
             connection.setControlPointShape (PointShape.SQUARE_FILLED_BIG);
             
             Widget iconNode = new Widget (scene);
-            //iconNode.setLayout (LayoutFactory.createVerticalFlowLayout (LayoutFactory.SerialAlignment.CENTER, 4));
             iconNode.addChild (new ImageWidget (scene, Utilities.loadImage ("/icons/reloj-de-arena.png")));
             iconNode.addChild (new LabelWidget (scene, flujo));
             connection.addChild (iconNode);
-            //connection.setConstraint (iconNode, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
             connection.setConstraint (iconNode, LayoutFactory.ConnectionWidgetLayoutAlignment.CENTER, 0.5f);
             return connection;
         }
