@@ -33,6 +33,12 @@ public class MainMenu extends javax.swing.JFrame {
     public MainMenu() {
         initComponents();
         this.controller = new MainMenuController(edit_btn, delete_btn, reset_btn, varopt_btn, addopt_btn, minusopt_btn, editorViewer);
+        edit_btn.setToolTipText("Editar");
+        delete_btn.setToolTipText("Borrar elemento");
+        reset_btn.setToolTipText("Reiniciar editor");
+        varopt_btn.setToolTipText("Agregar variable");
+        addopt_btn.setToolTipText("Relación de incremento");
+        minusopt_btn.setToolTipText("Relacion de decremento");
     }
     
 
