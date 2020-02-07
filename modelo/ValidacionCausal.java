@@ -12,10 +12,11 @@ import java.util.ArrayList;
  *
  */
 public class ValidacionCausal {
-    public int tam;
-    public int[][] matriz;
-    public ArrayList<Integer> nodosRecorridos = new ArrayList<>();
-    public ArrayList<String> cadenasGeneradas = new ArrayList<>();
+    
+    private int tam;
+    private int[][] matriz;
+    private ArrayList<Integer> nodosRecorridos = new ArrayList<>();
+    private ArrayList<String> cadenasGeneradas = new ArrayList<>();
     
     public ValidacionCausal(int t){
         this.tam = t;
@@ -25,6 +26,38 @@ public class ValidacionCausal {
 //                matriz[i][j] = 0;
 //            }
 //        }
+    }
+
+    public int getTam() {
+        return tam;
+    }
+
+    public void setTam(int tam) {
+        this.tam = tam;
+    }
+
+    public int[][] getMatriz() {
+        return matriz;
+    }
+
+    public void setMatriz(int[][] matriz) {
+        this.matriz = matriz;
+    }
+
+    public ArrayList<Integer> getNodosRecorridos() {
+        return nodosRecorridos;
+    }
+
+    public void setNodosRecorridos(ArrayList<Integer> nodosRecorridos) {
+        this.nodosRecorridos = nodosRecorridos;
+    }
+
+    public ArrayList<String> getCadenasGeneradas() {
+        return cadenasGeneradas;
+    }
+
+    public void setCadenasGeneradas(ArrayList<String> cadenasGeneradas) {
+        this.cadenasGeneradas = cadenasGeneradas;
     }
     
     public void rellenar(int[][] m){

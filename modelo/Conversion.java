@@ -12,10 +12,11 @@ import java.util.ArrayList;
  *
  */
 public class Conversion {
-    public int tam;
-    public int[][] matriz;
-    public String[][] matrizTipos;
-    public String[] ecuaciones;
+    
+    private int tam;
+    private int[][] matriz;
+    private String[][] matrizTipos;
+    private String[] ecuaciones;
     
     public Conversion(int t, int[][] m){
         this.tam = t;
@@ -39,7 +40,23 @@ public class Conversion {
             ecuaciones[i] = "";
         }
     }
-    
+
+    public int getTam() {
+        return tam;
+    }
+
+    public int[][] getMatriz() {
+        return matriz;
+    }
+
+    public String[][] getMatrizTipos() {
+        return matrizTipos;
+    }
+
+    public String[] getEcuaciones() {
+        return ecuaciones;
+    }
+
     public void identificarParams(){
         boolean param;
         for (int i = 0; i < tam; i++) {

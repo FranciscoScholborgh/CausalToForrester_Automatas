@@ -167,7 +167,7 @@ public class MainMenuController {
                 
             } else {
                 ArrayList<String> variables = new ArrayList<>();
-                String[][] tipos = causalConvertion.matrizTipos;    
+                String[][] tipos = causalConvertion.getMatrizTipos();    
                 for (int i = 0; i < matrix.length; i++) {
                     if(tipos[i][i].equals(" ")) {
                         String var = nodes.get(i);
@@ -201,10 +201,7 @@ public class MainMenuController {
     
     private void show_ForresterDiagram(Map<Integer, String> nodes) {
         ForresterViewerController forresterViewer = new ForresterViewer().getController();
-        forresterViewer.showDiagram(causalConvertion.matrizTipos, nodes);
-        forresterViewer.showEcuations(nodes, causalConvertion.ecuaciones);
-        for (String ecuacione : causalConvertion.ecuaciones) {
-            System.out.println(ecuacione);
-        }
+        forresterViewer.showDiagram(causalConvertion.getMatrizTipos(), nodes);
+        forresterViewer.showEcuations(nodes, causalConvertion.getEcuaciones());
     }
 }
