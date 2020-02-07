@@ -12,7 +12,7 @@ package utils.graph.factories;
 public class CasualDiagramFactory implements DiagramFactory{
 
     @Override
-    public DiagramViewer createDiagram() {
+    public  DiagramViewer createDiagram() {
         return new CausalDiagramEditor();
     }
     

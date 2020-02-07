@@ -18,7 +18,6 @@ import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -274,7 +273,7 @@ public class CausalDiagramEditor extends DiagramViewer{
         connection.getActions ().addAction (createObjectHoverAction ());
         connection.getActions ().addAction (createSelectAction ());
         connection.getActions ().addAction (reconnectAction);
-        connection.setRouter(RouterFactory.createOrthogonalSearchRouter (super.getMainLayer(), super.getConnectionLayer()));
+        //connection.setRouter(RouterFactory.createOrthogonalSearchRouter (super.getMainLayer(), super.getConnectionLayer()));
         super.getConnectionLayer().addChild (connection);
         return connection;
     }
@@ -369,7 +368,7 @@ public class CausalDiagramEditor extends DiagramViewer{
             signo.setOpaque (false);
             connection.addChild (signo);
             connection.setConstraint (signo, LayoutFactory.ConnectionWidgetLayoutAlignment.BOTTOM_LEFT, -25);
-            connection.setRouter(RouterFactory.createOrthogonalSearchRouter (scene.getMainLayer(), scene.getConnectionLayer()));
+            //connection.setRouter(RouterFactory.createOrthogonalSearchRouter (scene.getMainLayer(), scene.getConnectionLayer()));
             getConnectionLayer().addChild (connection);
             this.scene.addRelation(connection);
         }
